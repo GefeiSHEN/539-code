@@ -2,3 +2,4 @@ pretrained/*
 !pretrained/
 benchmark/dataset/*
 !benchmark/dataset/
+__pycache__/
