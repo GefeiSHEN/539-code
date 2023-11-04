@@ -5,7 +5,6 @@ bcolz-zipline
 prettytable
 menpo
 mxnet
-opencv-python
 numpy==1.19.5
 matplotlib==3.6.1
 pandas==1.4.4
