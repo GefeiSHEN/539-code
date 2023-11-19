@@ -9,7 +9,6 @@ from pytorch_lightning import seed_everything
 import config
 import os
 from utils import dotdict
-import utils
 import train_val
 import data
 import inspect
@@ -17,8 +16,6 @@ import inspect
 def main(args):
 
     hparams = dotdict(vars(args))
-
-    print(hparams)
 
     trainer_mod = train_val.Trainer(**hparams)
     data_mod = data.DataModule(**hparams)
@@ -42,30 +39,12 @@ def main(args):
         my_loggers.append(wandb_logger)
 
     resume_from_checkpoint = hparams.resume_from_checkpoint if hparams.resume_from_checkpoint else None
-    print(resume_from_checkpoint)
-    model = trainer_mod.load_from_checkpoint(resume_from_checkpoint, 
-                                             custom_num_class=85742,
-                                             arch=hparams.arch,
-                                             head=hparams.head,
-                                             m=hparams.m,
-                                             h=hparams.h,
-                                             t_alpha=hparams.t_alpha,
-                                             s=hparams.s,
-                                             start_from_model_statedict=hparams.start_from_model_statedict,
-                                             strict=False,
-                                             lr=hparams.lr,
-                                             momentum=hparams.momentum,
-                                             lr_milestones=hparams.lr_milestones,
-                                             lr_gamma=hparams.lr_gamma,
-                                             distributed_backend=hparams.distributed_backend
-                                             )
-    # model.freeze()
-    model.model.last_fc = torch.nn.Linear(512, utils.get_num_class(hparams))
 
     params = inspect.signature(pl.Trainer).parameters.values()
     if 'strategy' in [param.name for param in params]:
         # recent pytorch lightning
-        trainer = pl.Trainer(default_root_dir=hparams.output_dir,
+        trainer = pl.Trainer(resume_from_checkpoint=resume_from_checkpoint,
+                             default_root_dir=hparams.output_dir,
                              logger=my_loggers,
                              gpus=hparams.gpus,
                              max_epochs=hparams.epochs,
@@ -79,7 +58,6 @@ def main(args):
                              accumulate_grad_batches=hparams.accumulate_grad_batches,
                              limit_train_batches=50 if hparams.test_run else 1.0
                              )
-        
     else:
         # pytorch lightning before 1.4.4
         trainer = pl.Trainer(resume_from_checkpoint=resume_from_checkpoint,
@@ -100,8 +78,7 @@ def main(args):
     if not hparams.evaluate:
         # train / val
         print('start training')
-        # trainer.fit(model=model, trainer_mod, data_mod)
-        trainer.fit(model, data_mod)
+        trainer.fit(trainer_mod, data_mod)
         print('start evaluating')
         print('evaluating from ', checkpoint_callback.best_model_path)
         trainer.test(ckpt_path='best', datamodule=data_mod)
