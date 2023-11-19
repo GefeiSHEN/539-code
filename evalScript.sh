@@ -1,0 +1,11 @@
+python main.py \
+    --data_root ${DATAROOT} \
+    --train_data_path faces_webface_112x112 \
+    --val_data_path faces_webface_112x112 \
+    --prefix adaface_ir101_ms1mv2 \
+    --gpus 1 \
+    --use_16bit \
+    --start_from_model_statedict ./pretrained/adaface_ir101_ms1mv2.ckpt \
+    --arch ir_101 \
+    --evaluate \
+    --use_mxrecord
