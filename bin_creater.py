@@ -21,7 +21,7 @@ def get_paths(lfw_dir, pairs):
         path1 = os.path.join(lfw_dir, pair[1])
 
         # Assume label is 1 as default
-        issame = pair[2]
+        issame = pair[2] == '1'
 
         if os.path.exists(path0) and os.path.exists(path1):
             path_list += (path0, path1)
