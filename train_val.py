@@ -34,6 +34,10 @@ class Trainer(LightningModule):
             ckpt = torch.load(self.hparams.start_from_model_statedict)
             self.model.load_state_dict({key.replace('model.', ''):val
                                         for key,val in ckpt['state_dict'].items() if 'model.' in key})
+            
+            # uncomment the following code to lock model
+            # for param in self.model.parameters():
+            #     param.requires_grad = False
 
     def get_current_lr(self):
         scheduler = None
