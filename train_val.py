@@ -122,7 +122,7 @@ class Trainer(LightningModule):
 
         all_output_tensor, all_norm_tensor, all_target_tensor, all_dataname_tensor = self.gather_outputs(outputs)
 
-        dataname_to_idx = {"agedb_30": 0, "cfp_fp": 1, "lfw": 2, "cplfw": 3, "calfw": 4}
+        dataname_to_idx = {"agedb_30": 0, "cfp_fp": 1, "lfw": 2, "cplfw": 3, "calfw": 4, "cplfw_noised_test": 5}
         idx_to_dataname = {val: key for key, val in dataname_to_idx.items()}
         val_logs = {}
         for dataname_idx in all_dataname_tensor.unique():
@@ -157,7 +157,7 @@ class Trainer(LightningModule):
 
         all_output_tensor, all_norm_tensor, all_target_tensor, all_dataname_tensor = self.gather_outputs(outputs)
 
-        dataname_to_idx = {"agedb_30": 0, "cfp_fp": 1, "lfw": 2, "cplfw": 3, "calfw": 4}
+        dataname_to_idx = {"agedb_30": 0, "cfp_fp": 1, "lfw": 2, "cplfw": 3, "calfw": 4, "cplfw_noised_test": 5}
         idx_to_dataname = {val: key for key, val in dataname_to_idx.items()}
         test_logs = {}
         for dataname_idx in all_dataname_tensor.unique():
