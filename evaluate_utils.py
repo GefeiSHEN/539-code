@@ -14,8 +14,8 @@ def get_val_data(data_path):
     lfw, lfw_issame = get_val_pair(data_path, 'lfw')
     cplfw, cplfw_issame = get_val_pair(data_path, 'cplfw')
     calfw, calfw_issame = get_val_pair(data_path, 'calfw')
-    cplfw_noised_test, cplfw_noised_test_issame = get_val_pair(data_path, 'cplfw_noised_test')
-    return agedb_30, cfp_fp, lfw, agedb_30_issame, cfp_fp_issame, lfw_issame, cplfw, cplfw_issame, calfw, calfw_issame, cplfw_noised_test, cplfw_noised_test_issame
+    cplfw_noised_val, cplfw_noised_val_issame = get_val_pair(data_path, 'cplfw_noised_val')
+    return agedb_30, cfp_fp, lfw, agedb_30_issame, cfp_fp_issame, lfw_issame, cplfw, cplfw_issame, calfw, calfw_issame, cplfw_noised_val, cplfw_noised_val_issame
 
 def get_val_pair(path, name, use_memfile=True):
     if use_memfile:

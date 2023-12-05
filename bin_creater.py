@@ -53,7 +53,7 @@ def main():
     lfw_dir = args.data_dir
     image_size = [int(x) for x in args.image_size.split(',')]
     
-    pairs_file = 'benchmark/dataset/New Image size/pairs_val.txt'
+    pairs_file = 'data/adaface_images_112/pairs_test.txt'
     lfw_pairs = read_pairs(pairs_file)
 
     lfw_paths, issame_list = get_paths(lfw_dir, lfw_pairs)
