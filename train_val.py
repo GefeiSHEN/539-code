@@ -35,7 +35,11 @@ class Trainer(LightningModule):
             self.model.load_state_dict({key.replace('model.', ''):val
                                         for key,val in ckpt['state_dict'].items() if 'model.' in key})
             
-        if self.hparams.freeze_model:
+        if self.hparams.freeze_model == 'True':
+            print("---------------------")
+            print("Model Weights Freezed")
+            print("---------------------")
+            self.model.eval()
             for param in self.model.parameters():
                 param.requires_grad = False
 
