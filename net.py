@@ -330,7 +330,9 @@ class Backbone(Module):
         output = torch.div(x, norm)
 
         return output, norm
-
+    
+    def __len__(self):
+        return len(self.body)
 
 
 def IR_18(input_size):

@@ -6,7 +6,7 @@ import argparse
 import pandas as pd
 import tinyface_helper
 import sys, os
-sys.path.insert(0, os.path.dirname(os.getcwd()))
+sys.path.insert(0, os.getcwd())
 import net
 
 
@@ -103,10 +103,10 @@ def infer(model, dataloader, use_flip_test, fusion_method):
     norms = np.concatenate(norms, axis=0)
     return features, norms
 
-def load_pretrained_model(model_name='ir50'):
+def load_pretrained_model(path, arch):
     # load model and pretrained statedict
-    ckpt_path = adaface_models[model_name][0]
-    arch = adaface_models[model_name][1]
+    ckpt_path = path
+    arch = arch
 
     model = net.build_model(arch)
     statedict = torch.load(ckpt_path)['state_dict']
@@ -123,22 +123,14 @@ if __name__ == '__main__':
     parser.add_argument('--data_root', default='/data/data/faces/tinyface_root')
     parser.add_argument('--gpu', default=0, type=int, help='gpu id')
     parser.add_argument('--batch_size', default=32, type=int, help='')
-    parser.add_argument('--model_name', type=str, default='ir101_webface4m')
+    parser.add_argument('--arch', type=str, default='ir_101')
+    parser.add_argument('--train', type=bool)
+    parser.add_argument('--ckpt_path', type=str)
     parser.add_argument('--use_flip_test', type=str2bool, default='True')
     parser.add_argument('--fusion_method', type=str, default='pre_norm_vector_add', choices=('average', 'norm_weighted_avg', 'pre_norm_vector_add', 'concat', 'faceness_score'))
     args = parser.parse_args()
 
-    # load model
-    adaface_models = {
-        'ir50': ["../pretrained/adaface_ir50_ms1mv2.ckpt", 'ir_50'],
-        'ir101_ms1mv2': ["../pretrained/adaface_ir101_ms1mv2.ckpt", 'ir_101'],
-        'ir101_ms1mv3': ["../pretrained/adaface_ir101_ms1mv3.ckpt", 'ir_101'],
-        'ir101_webface4m': ["../pretrained/adaface_ir101_webface4m.ckpt", 'ir_101'],
-        'ir101_webface12m': ["../pretrained/adaface_ir101_webface12m.ckpt", 'ir_101'],
-    }
-    assert args.model_name in adaface_models
-    # load model
-    model = load_pretrained_model(args.model_name)
+    model = load_pretrained_model(args.ckpt_path, args.arch)
     model.to('cuda:{}'.format(args.gpu))
 
     tinyface_test = tinyface_helper.TinyFaceTest(tinyface_root=args.data_root,
@@ -146,7 +138,7 @@ if __name__ == '__main__':
 
     # set save root
     gpu_id = args.gpu
-    save_path = os.path.join('./tinyface_result', args.model_name, "fusion_{}".format(args.fusion_method))
+    save_path = os.path.join('./tinyface_result', args.ckpt_path.split('/')[-1], "fusion_{}".format(args.fusion_method))
 
     if not os.path.exists(save_path):
         os.makedirs(save_path)

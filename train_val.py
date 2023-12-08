@@ -35,14 +35,24 @@ class Trainer(LightningModule):
             self.model.load_state_dict({key.replace('model.', ''):val
                                         for key,val in ckpt['state_dict'].items() if 'model.' in key})
             
-        if self.hparams.freeze_model:
+        if self.hparams.freeze_model == 'True' or self.hparams.freeze_model == '100':
+            print("-------------------------")
+            print("All Model Weights Freezed")
+            print("-------------------------")
             self.model.eval()
             for param in self.model.parameters():
                 param.requires_grad = False
-        # else:
-        #     self.model.train()
-        #     for param in self.model.parameters():
-        #         param.requires_grad = True
+        elif int(self.hparams.freeze_model) > 0:
+            # The amount of layers to freeze (freeze the deeper/higher layers), in percentage. eg. 80 mean 80% of the layers will be freezed
+            percent = int(self.hparams.freeze_model) / 100
+            end_idx = int(len(self.model) * percent)
+            print("---------------------------")
+            print(f"Layers till {end_idx} Freezed")
+            print("--------------------------")
+            for i, layer in enumerate(self.model.body):
+                if i < end_idx:
+                    for param in layer.parameters():
+                        param.requires_grad = False
 
     def get_current_lr(self):
         scheduler = None
@@ -85,9 +95,16 @@ class Trainer(LightningModule):
         cos_thetas, norms, embeddings, labels = self.forward(images, labels)
         loss_train = self.cross_entropy_loss(cos_thetas, labels)
         lr = self.get_current_lr()
+
+        preds = torch.argmax(cos_thetas, dim=1)
+        correct = torch.sum(preds == labels).item()
+        total = labels.size(0)
+        accuracy = correct / total
+
         # log
         self.log('lr', lr, on_step=True, on_epoch=True, logger=True)
         self.log('train_loss', loss_train, on_step=True, on_epoch=True, logger=True)
+        self.log('train_accuracy', accuracy, on_step=True, on_epoch=True, logger=True)
 
         return loss_train
 
@@ -226,14 +243,22 @@ class Trainer(LightningModule):
         # paras_only_bn, paras_wo_bn = self.separate_bn_paras(self.model)
         paras_wo_bn, paras_only_bn = self.split_parameters(self.model)
 
-        optimizer = optim.SGD([{
-            'params': paras_wo_bn + [self.head.kernel],
-            'weight_decay': 5e-4
+        # optimizer = optim.SGD([{
+        #     'params': paras_wo_bn + [self.head.kernel],
+        #     'weight_decay': 5e-4
+        # }, {
+        #     'params': paras_only_bn
+        # }],
+        #                         lr=self.hparams.lr,
+        #                         momentum=self.hparams.momentum)
+
+        optimizer = optim.Adam([{
+        'params': paras_wo_bn + [self.head.kernel],
+        'weight_decay': 5e-4  # Adjust weight_decay if needed for Adam
         }, {
             'params': paras_only_bn
         }],
-                                lr=self.hparams.lr,
-                                momentum=self.hparams.momentum)
+        lr=self.hparams.lr)
 
         scheduler = lr_scheduler.MultiStepLR(optimizer,
                                              milestones=self.hparams.lr_milestones,
