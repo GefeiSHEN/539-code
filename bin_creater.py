@@ -53,7 +53,7 @@ def main():
     lfw_dir = args.data_dir
     image_size = [int(x) for x in args.image_size.split(',')]
     
-    pairs_file = 'data/adaface_images_112/pairs_test.txt'
+    pairs_file = 'data/dogFace_112/dogFaces_pairs.txt'
     lfw_pairs = read_pairs(pairs_file)
 
     lfw_paths, issame_list = get_paths(lfw_dir, lfw_pairs)

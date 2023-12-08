@@ -36,8 +36,13 @@ class Trainer(LightningModule):
                                         for key,val in ckpt['state_dict'].items() if 'model.' in key})
             
         if self.hparams.freeze_model:
+            self.model.eval()
             for param in self.model.parameters():
                 param.requires_grad = False
+        # else:
+        #     self.model.train()
+        #     for param in self.model.parameters():
+        #         param.requires_grad = True
 
     def get_current_lr(self):
         scheduler = None
@@ -122,7 +127,7 @@ class Trainer(LightningModule):
 
         all_output_tensor, all_norm_tensor, all_target_tensor, all_dataname_tensor = self.gather_outputs(outputs)
 
-        dataname_to_idx = {"agedb_30": 0, "cfp_fp": 1, "lfw": 2, "cplfw": 3, "calfw": 4, "cplfw_noised_val": 5}
+        dataname_to_idx = { "dogFaces_val": 0}
         idx_to_dataname = {val: key for key, val in dataname_to_idx.items()}
         val_logs = {}
         for dataname_idx in all_dataname_tensor.unique():
@@ -157,7 +162,7 @@ class Trainer(LightningModule):
 
         all_output_tensor, all_norm_tensor, all_target_tensor, all_dataname_tensor = self.gather_outputs(outputs)
 
-        dataname_to_idx = {"agedb_30": 0, "cfp_fp": 1, "lfw": 2, "cplfw": 3, "calfw": 4, "cplfw_noised_val": 5}
+        dataname_to_idx = {"dogFaces_val": 0}
         idx_to_dataname = {val: key for key, val in dataname_to_idx.items()}
         test_logs = {}
         for dataname_idx in all_dataname_tensor.unique():
