@@ -84,9 +84,16 @@ class Trainer(LightningModule):
         cos_thetas, norms, embeddings, labels = self.forward(images, labels)
         loss_train = self.cross_entropy_loss(cos_thetas, labels)
         lr = self.get_current_lr()
+
+        preds = torch.argmax(cos_thetas, dim=1)
+        correct = torch.sum(preds == labels).item()
+        total = labels.size(0)
+        accuracy = correct / total
+
         # log
         self.log('lr', lr, on_step=True, on_epoch=True, logger=True)
         self.log('train_loss', loss_train, on_step=True, on_epoch=True, logger=True)
+        self.log('train_accuracy', accuracy, on_step=True, on_epoch=True, logger=True)
 
         return loss_train
 
