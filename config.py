@@ -33,6 +33,7 @@ def get_args():
     parent_parser.add_argument('--resume_from_checkpoint', type=str, default='')
     parent_parser.add_argument('--start_from_model_statedict', type=str, default='')
     parent_parser.add_argument('--freeze_model', type=str, default='')
+    parent_parser.add_argument('--optimizer', type=str, default='adam')
     parent_parser.add_argument('--use_wandb', action='store_true')
     parent_parser.add_argument('--custom_num_class', type=int, default=-1)
 

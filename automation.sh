@@ -70,70 +70,74 @@ m=0.4
 h=0.333
 p=0.2
 lr=0.05
-fzs=(65 70 75 80 85 90)
+fzs=(0)
+optimizers=(sgd)
 
 mkdir -p ./ckpts
 
-for fz in "${fzs[@]}"; do
-    output_file="output_lr${lr}_p${p}_m${m}_h${h}_6_20_tinyface_Adam_${fz}Freeze.log"
-    ckpt_file_name="./ckpts/$(basename "$output_file" .log).ckpt"
-    python3 main.py \
-    --data_root ./train_dataset/ \
-    --train_data_path adaface_images \
-    --val_data_path adaface_images \
-    --prefix ir101_ms1mv2_adaface_tinyface_finetune_stage1 \
-    --gpus 1 \
-    --use_16bit \
-    --arch ir_101 \
-    --batch_size 2048 \
-    --num_workers 16 \
-    --epochs 6 \
-    --lr_milestones 4,10,16 \
-    --lr_gamma 0.05 \
-    --lr $lr \
-    --head adaface \
-    --use_wandb \
-    --m $m \
-    --h $h \
-    --low_res_augmentation_prob $p \
-    --crop_augmentation_prob $p \
-    --photometric_augmentation_prob $p \
-    --freeze_model True \
-    --start_from_model_statedict ./pretrained/adaface_ir101_ms1mv2.ckpt \
-    --custom_num_class 2570 \
-    --swap_color_channel \
-    >> $output_file
-    lastCkpt=$(find experiments -name last.ckpt)
-    if [ -n "$lastCkpt" ]; then
+for optimizer in "${optimizers[@]}"; do
+    for fz in "${fzs[@]}"; do
+        output_file="output_lr${lr}_p${p}_m${m}_h${h}_dogFace_${optimizer}_${fz}Freeze.log"
+        ckpt_file_name="./ckpts/$(basename "$output_file" .log).ckpt"
         python3 main.py \
         --data_root ./train_dataset/ \
-        --train_data_path adaface_images \
-        --val_data_path adaface_images \
-        --prefix ir101_ms1mv2_adaface_tinyface_finetune_stage2 \
+        --train_data_path dogFace_112 \
+        --val_data_path dogFace_112 \
+        --prefix ir101_ms1mv2_adaface_dogFace_${optimizer}_${fz}Freeze_lr${lr}_p${p}_m${m}_h${h} \
         --gpus 1 \
         --use_16bit \
         --arch ir_101 \
-        --batch_size 200 \
+        --batch_size 2048 \
         --num_workers 16 \
-        --epochs 20 \
-        --lr_milestones 4,10,16 \
+        --epochs 10 \
+        --lr_milestones 5,12,24 \
         --lr_gamma 0.05 \
         --lr $lr \
         --head adaface \
         --use_wandb \
+        --optimizer $optimizer \
         --m $m \
         --h $h \
         --low_res_augmentation_prob $p \
         --crop_augmentation_prob $p \
         --photometric_augmentation_prob $p \
-        --freeze_model $fz \
-        --resume_from_checkpoint "$lastCkpt" \
-        --custom_num_class 2570 \
+        --freeze_model True \
+        --start_from_model_statedict ./pretrained/adaface_ir101_ms1mv2.ckpt \
+        --custom_num_class 984 \
         --swap_color_channel \
-        >> $output_file 
-        mv "$lastCkpt" "$ckpt_file_name"
-        echo "Moved checkpoint to $ckpt_file_name" >> $output_file
-        echo "-------------------------------------" >> $output_file
-        python3 ./validation_lq/validate_tinyface.py --data_root ./data/tinyface --ckpt_path $ckpt_file_name >> $output_file
-    fi
+        >> $output_file
+        lastCkpt=$(find experiments -name last.ckpt)
+        if [ -n "$lastCkpt" ]; then
+            python3 main.py \
+            --data_root ./train_dataset/ \
+            --train_data_path dogFace_112 \
+            --val_data_path dogFace_112 \
+            --prefix ir101_ms1mv2_adaface_dogFace_${optimizer}_${fz}Freeze_lr${lr}_p${p}_m${m}_h${h} \
+            --gpus 1 \
+            --use_16bit \
+            --arch ir_101 \
+            --batch_size 200 \
+            --num_workers 16 \
+            --epochs 30 \
+            --lr_milestones 5,12,24 \
+            --lr_gamma 0.05 \
+            --lr $lr \
+            --head adaface \
+            --use_wandb \
+            --optimizer $optimizer \
+            --m $m \
+            --h $h \
+            --low_res_augmentation_prob $p \
+            --crop_augmentation_prob $p \
+            --photometric_augmentation_prob $p \
+            --freeze_model $fz \
+            --resume_from_checkpoint "$lastCkpt" \
+            --custom_num_class 984 \
+            --swap_color_channel \
+            >> $output_file 
+            mv "$lastCkpt" "$ckpt_file_name"
+            echo "Moved checkpoint to $ckpt_file_name" >> $output_file
+            echo "-------------------------------------" >> $output_file
+        fi
+    done
 done

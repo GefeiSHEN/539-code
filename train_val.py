@@ -3,6 +3,7 @@ import torch.optim as optim
 import torch.optim.lr_scheduler as lr_scheduler
 from pytorch_lightning.core import LightningModule
 from torch.nn import CrossEntropyLoss
+f
 import evaluate_utils
 import head
 import net
@@ -27,8 +28,8 @@ class Trainer(LightningModule):
                                      t_alpha=self.hparams.t_alpha,
                                      s=self.hparams.s,
                                      )
-
-        self.cross_entropy_loss = CrossEntropyLoss()
+        
+        self.loss = CrossEntropyLoss()
 
         if self.hparams.start_from_model_statedict:
             ckpt = torch.load(self.hparams.start_from_model_statedict)
@@ -93,7 +94,7 @@ class Trainer(LightningModule):
         images, labels = batch
 
         cos_thetas, norms, embeddings, labels = self.forward(images, labels)
-        loss_train = self.cross_entropy_loss(cos_thetas, labels)
+        loss_train = self.loss(cos_thetas, labels)
         lr = self.get_current_lr()
 
         preds = torch.argmax(cos_thetas, dim=1)
@@ -243,22 +244,23 @@ class Trainer(LightningModule):
         # paras_only_bn, paras_wo_bn = self.separate_bn_paras(self.model)
         paras_wo_bn, paras_only_bn = self.split_parameters(self.model)
 
-        # optimizer = optim.SGD([{
-        #     'params': paras_wo_bn + [self.head.kernel],
-        #     'weight_decay': 5e-4
-        # }, {
-        #     'params': paras_only_bn
-        # }],
-        #                         lr=self.hparams.lr,
-        #                         momentum=self.hparams.momentum)
-
-        optimizer = optim.Adam([{
-        'params': paras_wo_bn + [self.head.kernel],
-        'weight_decay': 5e-4  # Adjust weight_decay if needed for Adam
-        }, {
-            'params': paras_only_bn
-        }],
-        lr=self.hparams.lr)
+        if self.hparams.optimizer == 'adam':
+            optimizer = optim.Adam([{
+                'params': paras_wo_bn + [self.head.kernel],
+                'weight_decay': 5e-4  # Adjust weight_decay if needed for Adam
+                }, {
+                    'params': paras_only_bn
+                }],
+                lr=self.hparams.lr)
+        else:
+            optimizer = optim.SGD([{
+                'params': paras_wo_bn + [self.head.kernel],
+                'weight_decay': 5e-4
+            }, {
+                'params': paras_only_bn
+            }],
+                                    lr=self.hparams.lr,
+                                    momentum=self.hparams.momentum)
 
         scheduler = lr_scheduler.MultiStepLR(optimizer,
                                              milestones=self.hparams.lr_milestones,
