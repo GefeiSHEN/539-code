@@ -41,7 +41,7 @@ class DataModule(pl.LightningDataModule):
         if not os.path.isfile(self.concat_mem_file_name):
             # create a concat memfile
             concat = []
-            for key in ['dogFaces_val']:
+            for key in ['dogFaces_val','dogFaces_test']:
                 np_array, issame = evaluate_utils.get_val_pair(path=os.path.join(self.data_root, self.val_data_path),
                                                                name=key,
                                                                use_memfile=False)
@@ -158,9 +158,10 @@ def train_dataset(data_root, train_data_path,
 def val_dataset(data_root, val_data_path, concat_mem_file_name):
     val_data = evaluate_utils.get_val_data(os.path.join(data_root, val_data_path))
     # theses datasets are already normalized with mean 0.5, std 0.5
-    dogFaces_val, dogFaces_val_issame = val_data
+    dogFaces_val, dogFaces_val_issame, dogFaces_test, dogFaces_test_issame = val_data
     val_data_dict = {
         "dogFaces_val": (dogFaces_val, dogFaces_val_issame),
+        "dogFaces_test": (dogFaces_test, dogFaces_test_issame),
     }
     val_dataset = FiveValidationDataset(val_data_dict, concat_mem_file_name)
 
@@ -170,9 +171,10 @@ def val_dataset(data_root, val_data_path, concat_mem_file_name):
 def test_dataset(data_root, val_data_path, concat_mem_file_name):
     val_data = evaluate_utils.get_val_data(os.path.join(data_root, val_data_path))
     # theses datasets are already normalized with mean 0.5, std 0.5
-    dogFaces_val, dogFaces_val_issame = val_data
+    dogFaces_val, dogFaces_val_issame, dogFaces_test, dogFaces_test_issame = val_data
     val_data_dict = {
         "dogFaces_val": (dogFaces_val, dogFaces_val_issame),
+        "dogFaces_test": (dogFaces_test, dogFaces_test_issame),
     }
     val_dataset = FiveValidationDataset(val_data_dict, concat_mem_file_name)
     return val_dataset
