@@ -10,7 +10,8 @@ from scipy import interpolate
 
 def get_val_data(data_path):
     dogFaces_val, dogFaces_val_issame = get_val_pair(data_path, 'dogFaces_val')
-    return dogFaces_val, dogFaces_val_issame
+    dogFaces_test, dogFaces_test_issame = get_val_pair(data_path, 'dogFaces_test')
+    return dogFaces_val, dogFaces_val_issame, dogFaces_test, dogFaces_test_issame
 
 def get_val_pair(path, name, use_memfile=True):
     if use_memfile:

@@ -20,7 +20,7 @@ class FiveValidationDataset(Dataset):
         cplfw: 3
         calfw: 4
         '''
-        self.dataname_to_idx = {"dogFaces_val": 0}
+        self.dataname_to_idx = { "dogFaces_val": 0, "dogFaces_test": 1}
 
         self.val_data_dict = val_data_dict
         # concat all dataset
@@ -37,7 +37,7 @@ class FiveValidationDataset(Dataset):
             all_issame.append(dup_issame)
             all_dataname.append([self.dataname_to_idx[key]] * len(imgs))
             key_orders.append(key)
-        assert key_orders == ['dogFaces_val']
+        assert key_orders == ['dogFaces_val', 'dogFaces_test']
 
         if isinstance(all_imgs[0], np.memmap):
             self.all_imgs = evaluate_utils.read_memmap(concat_mem_file_name)

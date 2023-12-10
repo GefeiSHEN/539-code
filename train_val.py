@@ -144,7 +144,7 @@ class Trainer(LightningModule):
 
         all_output_tensor, all_norm_tensor, all_target_tensor, all_dataname_tensor = self.gather_outputs(outputs)
 
-        dataname_to_idx = { "dogFaces_val": 0}
+        dataname_to_idx = { "dogFaces_val": 0, "dogFaces_test": 1}
         idx_to_dataname = {val: key for key, val in dataname_to_idx.items()}
         val_logs = {}
         for dataname_idx in all_dataname_tensor.unique():
@@ -179,7 +179,7 @@ class Trainer(LightningModule):
 
         all_output_tensor, all_norm_tensor, all_target_tensor, all_dataname_tensor = self.gather_outputs(outputs)
 
-        dataname_to_idx = {"dogFaces_val": 0}
+        dataname_to_idx = { "dogFaces_val": 0, "dogFaces_test": 1}
         idx_to_dataname = {val: key for key, val in dataname_to_idx.items()}
         test_logs = {}
         for dataname_idx in all_dataname_tensor.unique():
