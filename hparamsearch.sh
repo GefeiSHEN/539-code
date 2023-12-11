@@ -1,11 +1,11 @@
-ms=(0.75)
-hs=(0.66)
-ps=(0.3)
+ms=(0.4 0.5 0.75)
+hs=(0.22 0.333 0.66)
+ps=(0 0.2 0.3)
 lr=0.05
 fzs=(0)
 momentums=(0.93)
-t_alphas=(0.01 0.005 0.015)
-optimizers=(sgd)
+t_alphas=(0.01)
+optimizers=(sgd adam)
 
 mkdir -p ./ckpts
 mkdir -p ./logs
@@ -36,7 +36,7 @@ for t_alpha in "${t_alphas[@]}"; do
                             --num_workers 16 \
                             --epochs 10 \
                             --lr_milestones 5,12,24 \
-                            --lr_gamma 0.05 \
+                            --lr_gamma 0.1 \
                             --lr $lr \
                             --head adaface \
                             --use_wandb \
@@ -65,9 +65,9 @@ for t_alpha in "${t_alphas[@]}"; do
                                 --arch ir_101 \
                                 --batch_size 200 \
                                 --num_workers 16 \
-                                --epochs 30 \
+                                --epochs 35 \
                                 --lr_milestones 5,12,24 \
-                                --lr_gamma 0.05 \
+                                --lr_gamma 0.1 \
                                 --lr $lr \
                                 --head adaface \
                                 --use_wandb \
