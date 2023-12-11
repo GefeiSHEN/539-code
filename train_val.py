@@ -180,14 +180,15 @@ class Trainer(LightningModule):
             test_logs[f'{dataname}_test_acc'] = acc
             test_logs[f'{dataname}_test_best_threshold'] = best_threshold
             test_logs[f'{dataname}_num_test_samples'] = num_test_samples
+            test_logs[f'{dataname}_tpr'] = tpr
+            test_logs[f'{dataname}_fpr'] = fpr
 
         test_logs['test_acc'] = np.mean([
             test_logs[f'{dataname}_test_acc'] for dataname in dataname_to_idx.keys()
             if f'{dataname}_test_acc' in test_logs
         ])
         test_logs['epoch'] = self.current_epoch
-        test_logs['tpr'] = tpr
-        test_logs['fpr'] = fpr
+        
         
 
         for k, v in test_logs.items():
