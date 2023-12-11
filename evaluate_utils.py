@@ -86,6 +86,8 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame, nrof_fold
     tprs = np.zeros((nrof_folds, nrof_thresholds))
     fprs = np.zeros((nrof_folds, nrof_thresholds))
     accuracy = np.zeros((nrof_folds))
+    bestTprs  = np.zeros((nrof_folds))
+    bestFprs = np.zeros((nrof_folds))
     best_thresholds = np.zeros((nrof_folds))
     indices = np.arange(nrof_pairs)
     # print('pca', pca)
@@ -125,11 +127,11 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame, nrof_fold
                                                                                                  dist[test_set],
                                                                                                  actual_issame[
                                                                                                      test_set])
-        _, _, accuracy[fold_idx] = calculate_accuracy(thresholds[best_threshold_index], dist[test_set],
+        bestTprs[fold_idx], bestFprs[fold_idx], accuracy[fold_idx] = calculate_accuracy(thresholds[best_threshold_index], dist[test_set],
                                                       actual_issame[test_set])
 
-    tpr = np.mean(tprs, 0)
-    fpr = np.mean(fprs, 0)
+    tpr = np.mean(bestTprs)
+    fpr = np.mean(bestFprs)
     return tpr, fpr, accuracy, best_thresholds
 
 

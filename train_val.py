@@ -148,6 +148,8 @@ class Trainer(LightningModule):
             val_logs[f'{dataname}_val_acc'] for dataname in dataname_to_idx.keys() if f'{dataname}_val_acc' in val_logs
         ])
         val_logs['epoch'] = self.current_epoch
+        #test_logs['trp'] = tpr
+        #test_logs['fpr'] = fpr
 
         for k, v in val_logs.items():
             # self.log(name=k, value=v, rank_zero_only=True)
@@ -184,6 +186,9 @@ class Trainer(LightningModule):
             if f'{dataname}_test_acc' in test_logs
         ])
         test_logs['epoch'] = self.current_epoch
+        test_logs['tpr'] = tpr
+        test_logs['fpr'] = fpr
+        
 
         for k, v in test_logs.items():
             # self.log(name=k, value=v, rank_zero_only=True)
