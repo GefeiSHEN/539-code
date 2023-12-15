@@ -7,6 +7,7 @@ Note: As a general guideline, always refer to [AdaFace](https://github.com/mk-mi
 - Created scripts to aggregate images and pairing information for the validation and testing datasets into binary files, one binary file for the validation set, and one binary file for the testing set
 - Modified AdaFace code to accept the DogFaceNet Dataset for both training, validation, and testing
 - Modified the AdaFace code to allow freezing and unfreezing the model to facilitate transfer learning
+- Modified the AdaFace code so it logs the training loss to wandb during training
 - Modified the AdaFace code so it reports the TP, TF, NP, and NF metrics during testing
 - Created a hyperparameter search bash shell script
 - Created scipts for adding shadows to CPLFW images
