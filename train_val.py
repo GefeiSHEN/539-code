@@ -153,7 +153,7 @@ class Trainer(LightningModule):
             embeddings = all_output_tensor[all_dataname_tensor == dataname_idx].to('cpu').numpy()
             labels = all_target_tensor[all_dataname_tensor == dataname_idx].to('cpu').numpy()
             issame = labels[0::2]
-            tpr, fpr, accuracy, best_thresholds = evaluate_utils.evaluate(embeddings, issame, nrof_folds=10)
+            tp, fp, tn, fn, accuracy, best_thresholds = evaluate_utils.evaluate(embeddings, issame, nrof_folds=10)
             acc, best_threshold = accuracy.mean(), best_thresholds.mean()
 
             num_val_samples = len(embeddings)
@@ -188,19 +188,25 @@ class Trainer(LightningModule):
             embeddings = all_output_tensor[all_dataname_tensor == dataname_idx].to('cpu').numpy()
             labels = all_target_tensor[all_dataname_tensor == dataname_idx].to('cpu').numpy()
             issame = labels[0::2]
-            tpr, fpr, accuracy, best_thresholds = evaluate_utils.evaluate(embeddings, issame, nrof_folds=10)
+            tp, fp, tn, fn, accuracy, best_thresholds = evaluate_utils.evaluate(embeddings, issame, nrof_folds=10)
             acc, best_threshold = accuracy.mean(), best_thresholds.mean()
 
             num_test_samples = len(embeddings)
             test_logs[f'{dataname}_test_acc'] = acc
             test_logs[f'{dataname}_test_best_threshold'] = best_threshold
             test_logs[f'{dataname}_num_test_samples'] = num_test_samples
+            test_logs[f'{dataname}_tp'] = tp
+            test_logs[f'{dataname}_fp'] = fp
+            test_logs[f'{dataname}_tn'] = tn
+            test_logs[f'{dataname}_fn'] = fn
 
         test_logs['test_acc'] = np.mean([
             test_logs[f'{dataname}_test_acc'] for dataname in dataname_to_idx.keys()
             if f'{dataname}_test_acc' in test_logs
         ])
         test_logs['epoch'] = self.current_epoch
+        
+        
 
         for k, v in test_logs.items():
             # self.log(name=k, value=v, rank_zero_only=True)
