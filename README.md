@@ -1,17 +1,12 @@
 # Installation Steps:
 
-Note: As a general guideline, always refer to [AdaFace](https://github.com/mk-minchul/AdaFace/blob/master/README_TRAIN.md)
+Note: As a general guideline, always refer to [AdaFace](https://github.com/mk-minchul/AdaFace/blob/master/README_TRAIN.md) for instructions for installing dependencies
 
-## Steps
-1. Clone this repo, cd to this repo.
-2. Run the following:
-```
-conda create --name adaface pytorch==1.8.0 torchvision==0.9.0 cudatoolkit=10.2 -c pytorch
-conda activate adaface
-conda install scikit-image matplotlib pandas scikit-learn 
-pip install -r requirements.txt
-```
-3. If you encounter an error during the above step: "Error while installing PyTorch using pip - cannot build wheel", run the following to install pytorch
-```
-conda install pytorch==1.8.0 torchvision==0.9.0 torchaudio==0.8.0 cudatoolkit=10.2 -c pytorch
-```
+# Modifications made to AdaFace code for this project
+- Created novel scripts for partitioning and resizing the DogFaceNet dataset, and created scripts for creating labeled pairs for validation and testing datasets
+- Created scripts to aggregate images and pairing information for the validation and testing datasets into binary files, one binary file for the validation set, and one binary file for the testing set
+- Modified AdaFace code to accept the DogFaceNet Dataset for both training, validation, and testing
+- Modified the AdaFace code to allow freezing and unfreezing the model to facilitate transfer learning
+- Modified the AdaFace code so it reports the TP, TF, NP, and NF metrics during testing
+- Created a hyperparameter search bash shell script
+- Created scipts for adding shadows to CPLFW images
