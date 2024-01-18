@@ -18,7 +18,7 @@ This project finetuned a model based on AdaFace to recognize faces of individual
 Images from the Dog-FaceNet Dataset were resized, partitioned into 70/15/15 distinct training, validation, and testing sets, and transformed into unique pairs (image1, image2, label 0-different dogs 1-same dog). Samples are then loaded into a binary file.
 
 ## Training
-We enhanced the AdaFace model using transfer learning in two stages: first by training only the classification head with the model frozen, and then by training the entire model. We used a bash script for grid search hyperparameter optimization and analyzed training data via the wandb platform to find the best hyperparameter combination.
+We enhanced the AdaFace model using transfer learning in two stages: first by training only the classification head with the model frozen, and then by training the entire model. We used a bash script for grid search hyperparameter optimization and utilized weights and bias to store results from all experiments.
 
 ## Evaluation 
 In the final evaluation phase, we used a holdout dataset and modified AdaFace code to report detailed metrics like true positives and negatives, enhancing the original code's limited performance reporting.
