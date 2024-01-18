@@ -1,8 +1,9 @@
-# Installation Steps:
+# Dog Face Recognition Based on AdaFace
 
-Note: As a general guideline, always refer to [AdaFace](https://github.com/mk-minchul/AdaFace/blob/master/README_TRAIN.md) for instructions for installing dependencies
+This project finetuned a model based on AdaFace to recognize faces of individual dogs. The model is finetuned on the [AdaFace R100 MS1MV2](https://github.com/mk-minchul/AdaFace) base model with images from [TheDogFaceNet Dataset1](https://github.com/GuillaumeMougeot/DogFaceNet/releases/tag/dataset).
 
-# Modifications made to AdaFace code for this project
+
+## Modifications made to AdaFace code for this project
 - Created novel scripts for partitioning and resizing the DogFaceNet dataset, and created scripts for creating labeled pairs for validation and testing datasets
 - Created scripts to aggregate images and pairing information for the validation and testing datasets into binary files, one binary file for the validation set, and one binary file for the testing set
 - Modified AdaFace code to accept the DogFaceNet Dataset for both training, validation, and testing
